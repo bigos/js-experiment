@@ -28,15 +28,11 @@
   (camelize (symbol-name symbol)))
 
 ;;; not working yet
-;;; (fun-to-js '(alert "hello"))
+;;; (fun-to-js '((1 2 (3 (4 (5)))  6 7)) nil)
 ;;; attempt to convert sexp to JS function(arguments)
-(defun fun-to-js (sexp)
-  (if (consp sexp)
-      (if (symbolp (car sexp))
-          (format nil "~a(~a)" (symbol-to-js (car sexp))
-                  (fun-to-js (cdr sexp)))
-          (format nil "~A" (car sexp)))
-      (format nil "~a" (if (symbolp sexp)
-                           (symbol-to-js sexp)
-                           sexp
-                           ))))
+(defun fun-to-js (sexp fst)
+  (when (consp sexp)
+    (if (consp (car sexp))
+        (fun-to-js (car sexp) T)
+        (format t " ~a~a ~%" sexp fst))
+    (fun-to-js (cdr sexp) nil)))
