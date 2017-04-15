@@ -27,33 +27,25 @@
   "Converts SYMBOL to lowercase or camelCase string"
   (camelize (symbol-name symbol)))
 
-;;; (fun-to-js '(1 2 (3 (4 (5 )))  6 7) T nil T)
-;;; attempt to convert sexp to JS function(arguments)
-(defun fun-to-js% (sexp fst snd lst)
-  (if (consp sexp)
-    (progn
-      (if (not (consp (car sexp)))
-          (progn
-            (if fst
-                (format t "~a~a(" (if lst "" ", ") (car sexp)))
-            (if (not fst)
-                (format t "~a~a"  (if snd "" ", ") (car sexp))))
-          (fun-to-js% (car sexp) T fst snd))
-      (fun-to-js% (cdr sexp) nil fst snd))
-    (format t ")" )))
-
-(defun fun-to-js (sexp)
-  (fun-to-js% sexp t nil t))
-
-(defun my-sexp (sexp)
+(defun my-sexp (sexp a)
   (if (consp sexp)
       (if (consp (car sexp))
-          (progn                        ;consp car
-            ;; (format t " <~A> " (car sexp))
-            (my-sexp (car sexp))
-            (my-sexp (cdr sexp)))
-          (progn                        ;just consp
-            (format t " {~A} "  sexp)
-            (my-sexp (cdr sexp))))
+          (progn
+            (my-sexp (car sexp) (cons 1 a))
+            (my-sexp (cdr sexp) a))
+          (progn
+            (format t " {~A ~A} " sexp a)
+            (my-sexp (cdr sexp)  a)))
       (progn                            ;atom
-        (format t " [~a] " sexp))))
+        (format t " [~a ~a] " sexp a))))
+
+(defun my-test ()
+  (progn
+    (my-sexp '(((ala) ma) kota) '(1))
+    (terpri)
+    (my-sexp '(ala ma kota) '(1))
+    (terpri)
+    (my-sexp '(ala (ma) kota) '(1))
+    (terpri)
+    (my-sexp '(ala (ma (kota))) '(1))
+    (terpri)))
