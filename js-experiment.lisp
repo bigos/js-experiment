@@ -27,25 +27,24 @@
   "Converts SYMBOL to lowercase or camelCase string"
   (camelize (symbol-name symbol)))
 
+;;; elements and their depth
 (defun my-sexp (sexp a)
   (if (consp sexp)
       (if (consp (car sexp))
           (progn
-            (my-sexp (car sexp) (cons 1 a))
+            (my-sexp (car sexp) (1+ a))
             (my-sexp (cdr sexp) a))
           (progn
-            (format t " {~A ~A} " sexp a)
-            (my-sexp (cdr sexp)  a)))
-      (progn                            ;atom
-        (format t " [~a ~a] " sexp a))))
+            (format t " {~A ~A} " (car sexp) a)
+            (my-sexp (cdr sexp) a)))))
 
 (defun my-test ()
   (progn
-    (my-sexp '(((ala) ma) kota) '(1))
+    (my-sexp '(((ala) ma) kota) 0)
     (terpri)
-    (my-sexp '(ala ma kota) '(1))
+    (my-sexp '(ala ma kota) 0)
     (terpri)
-    (my-sexp '(ala (ma) kota) '(1))
+    (my-sexp '(ala (ma posiada) kota) 0)
     (terpri)
-    (my-sexp '(ala (ma (kota))) '(1))
+    (my-sexp '(ala (ma (kota))) 0)
     (terpri)))
