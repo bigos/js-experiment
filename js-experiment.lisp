@@ -32,13 +32,28 @@
 (defun fun-to-js% (sexp fst snd lst)
   (if (consp sexp)
     (progn
-      (if (consp (car sexp))
-          (fun-to-js% (car sexp) T fst snd)
-          (if fst
-              (format t "~a~a(" (if lst "" ", ") (car sexp) )
-              (format t "~a~a"  (if snd "" ", ") (car sexp))))
+      (if (not (consp (car sexp)))
+          (progn
+            (if fst
+                (format t "~a~a(" (if lst "" ", ") (car sexp)))
+            (if (not fst)
+                (format t "~a~a"  (if snd "" ", ") (car sexp))))
+          (fun-to-js% (car sexp) T fst snd))
       (fun-to-js% (cdr sexp) nil fst snd))
     (format t ")" )))
 
 (defun fun-to-js (sexp)
   (fun-to-js% sexp t nil t))
+
+(defun my-sexp (sexp)
+  (if (consp sexp)
+      (if (consp (car sexp))
+          (progn                        ;consp car
+            ;; (format t " <~A> " (car sexp))
+            (my-sexp (car sexp))
+            (my-sexp (cdr sexp)))
+          (progn                        ;just consp
+            (format t " {~A} "  sexp)
+            (my-sexp (cdr sexp))))
+      (progn                            ;atom
+        (format t " [~a] " sexp))))
