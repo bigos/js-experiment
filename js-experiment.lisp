@@ -27,6 +27,11 @@
   "Converts SYMBOL to lowercase or camelCase string"
   (camelize (symbol-name symbol)))
 
+(defun flatten (x &optional acc)
+  (cond ((null x) acc)
+        ((atom x) (cons x acc))
+        (t (flatten (car x) (flatten (cdr x) acc)))))
+
 ;;; elements and their depth
 (defun my-sexp (sexp a)
   (if (consp sexp)
