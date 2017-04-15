@@ -30,9 +30,13 @@
 ;;; not working yet
 ;;; (fun-to-js '((1 2 (3 (4 (5)))  6 7)) nil)
 ;;; attempt to convert sexp to JS function(arguments)
-(defun fun-to-js (sexp fst)
+(defun fun-to-js (sexp fst snd lst)
+  (when (atom sexp)
+    (format t ")" ))
   (when (consp sexp)
     (if (consp (car sexp))
-        (fun-to-js (car sexp) T)
-        (format t " ~a~a ~%" sexp fst))
-    (fun-to-js (cdr sexp) nil)))
+        (fun-to-js (car sexp) T fst snd)
+        (if fst
+            (format t "~a~a(" (if lst "" ", ") (car sexp) )
+            (format t "~A~a"  (if snd "" ", ") (car sexp))))
+    (fun-to-js (cdr sexp) nil fst snd)))
