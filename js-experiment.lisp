@@ -1,4 +1,5 @@
 ;;; js experiment
+(in-package #:js-experiment)
 
 (declaim (optimize (debug 3)))
 
@@ -54,12 +55,10 @@
     (my-sexp '(ala (ma (kota))) 0)
     (terpri)))
 
-;; (flatten '(1 2 (3 4) 5 6))
-;; (1 2 3 :OPEN 4 :OPEN :CLOSE :CLOSE :CLOSE 5 6 :CLOSE)
-;;                -------------------
+
 (defun flatten (x &optional acc)
   (cond ((null x) (concatenate 'list (list :close) acc))
         ((atom x) (concatenate 'list (list  x) acc))
         (t (if (consp (car x))
-               (flatten (concatenate 'list (list (caar x)) (list :open) (list (cdr (car x)))) (flatten (cdr x)  acc))
+               (flatten (concatenate 'list (list (caar x) :open)  (cdr (car x))) (flatten (cdr x)  acc))
                (flatten (car x) (flatten (cdr x)  acc))))))
