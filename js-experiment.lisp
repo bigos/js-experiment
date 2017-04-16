@@ -57,15 +57,23 @@
 
 
 (defun flatten (x &optional acc)
-  (cond ((null x) (concatenate 'list (list #\)) acc))
-        ((atom x) (concatenate 'list (list  x) acc))
-        (t (if (consp (car x))
-               (flatten (concatenate 'list
-                                     (list (caar x) #\()
-                                     (cdar x))
-                        (flatten (cdr x)  acc))
-               (flatten (car x)
-                        (flatten (cdr x) acc))))))
+  (cond ((null x) (concatenate 'list (list #\) ) acc))
+        ((atom x) (concatenate 'list
+                               (cond
+                                 ((or (equal (car acc) #\) )
+                                      (equal (car acc) #\( )
+                                      (equal x         #\( ))
+                                  (list x))
+                                 (T
+                                  (list x  #\,))) ;insert commas
+                               acc))
+        (t (flatten
+            (if (consp (car x))
+                (concatenate 'list
+                             (list (caar x) #\( )
+                             (cdar x))
+                (car x))
+            (flatten (cdr x) acc)))))
 
 (defun flat (x)
   (butlast (flatten (list x))))
