@@ -28,11 +28,6 @@
   "Converts SYMBOL to lowercase or camelCase string"
   (camelize (symbol-name symbol)))
 
-;; (defun flatten (x &optional acc)
-;;   (cond ((null x) acc)
-;;         ((atom x) (cons x acc))
-;;         (t (flatten (car x) (flatten (cdr x) acc)))))
-
 ;;; elements and their depth
 (defun my-sexp (sexp a)
   (if (consp sexp)
@@ -55,17 +50,14 @@
     (my-sexp '(ala (ma (kota))) 0)
     (terpri)))
 
-
 (defun flatten (x &optional acc)
   (cond ((null x) (concatenate 'list (list #\) ) acc))
         ((atom x) (concatenate 'list
-                               (cond
-                                 ((or (equal (car acc) #\) )
-                                      (equal (car acc) #\( )
-                                      (equal x         #\( ))
-                                  (list x))
-                                 (T
-                                  (list x  #\,))) ;insert commas
+                               (if (or (equal (car acc) #\) )
+                                       (equal (car acc) #\( )
+                                       (equal x         #\( ))
+                                   (list x)
+                                   (list x #\,)) ;insert commas
                                acc))
         (t (flatten
             (if (consp (car x))
@@ -75,5 +67,7 @@
                 (car x))
             (flatten (cdr x) acc)))))
 
+;;; converts sexp into a flat list that can be easily converted to printed
+;;; representation of prefix notation
 (defun flat (x)
   (butlast (flatten (list x))))
