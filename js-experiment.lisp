@@ -50,7 +50,7 @@
     (my-sexp '(ala (ma (kota))) 0)
     (terpri)))
 
-(defun flatten (x &optional acc)
+(defun prefixise% (x &optional acc)
   (cond ((null x) (concatenate 'list (list #\) ) acc))
         ((atom x) (concatenate 'list
                                (if (or (equal (car acc) #\) )
@@ -59,15 +59,29 @@
                                    (list x)
                                    (list x #\,)) ;insert commas
                                acc))
-        (t (flatten
+        (t (prefixise%
             (if (consp (car x))
                 (concatenate 'list
                              (list (caar x) #\( )
                              (cdar x))
                 (car x))
-            (flatten (cdr x) acc)))))
+            (prefixise% (cdr x) acc)))))
 
 ;;; converts sexp into a flat list that can be easily converted to printed
 ;;; representation of prefix notation
-(defun flat (x)
-  (butlast (flatten (list x))))
+(defun prefixise (x)
+  (butlast (prefixise% (list x))))
+
+;;; no infix operators yet
+;;; no keywords
+;;; no infix operators
+(defun print-prefixed (sexp)
+  (loop for e in (prefixise sexp)
+     do (cond ((symbolp e)
+               (format t "~a" (symbol-to-js  e)))
+              ((equal e #\,)
+               (format t "~a " e))
+              ((stringp e)
+               (format t "~S" e))
+              (T
+               (format t "~a" e)))))
